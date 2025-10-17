@@ -8,7 +8,7 @@ pm_apk_upgrade() {
     if [[ ${CI-} != true ]]; then
         notice "Upgrading packages. Please be patient, this can take a while."
         local COMMAND='sudo apk upgrade'
-        local REDIRECT='> /dev/null 2>&1 '
+        local REDIRECT='&> /dev/null '
         if [[ -n ${VERBOSE-} ]]; then
             #shellcheck disable=SC2016 # (info): Expressions don't expand in single quotes, use double quotes for that.
             REDIRECT='run_command_dialog "${Title}" "${COMMAND}" "" '

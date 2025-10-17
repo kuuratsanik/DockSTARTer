@@ -7,7 +7,7 @@ pm_apk_install_docker() {
     Title="Install Docker"
     notice "Installing docker. Please be patient, this can take a while."
     local COMMAND='sudo apk add docker docker-cli-compose'
-    local REDIRECT='> /dev/null 2>&1 '
+    local REDIRECT='&> /dev/null '
     if [[ -n ${VERBOSE-} ]]; then
         #shellcheck disable=SC2016 # (info): Expressions don't expand in single quotes, use double quotes for that.
         REDIRECT='run_command_dialog "${Title}" "${COMMAND}" "" '

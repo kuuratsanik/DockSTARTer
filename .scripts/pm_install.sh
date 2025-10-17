@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+IFS=$'\n\t'
+
+pm_install() {
+    # Determine the dependencies needing to be installed
+    local -a Dependencies=("${PM_COMMAND_DEPS[@]}")
+    if [[ ${FORCE-} != true ]]; then
+        for index in "${!Dependencies[@]}"; do
+            if pm_check_dependency "${Dependencies[index]}"; then
+                unset 'Dependencies[index]'
+            fi
+        done
+        Dependencies=("${Dependencies[@]}")
+    fi
+
+    # Exit if no dependencies need to be installed
+    if [[ ${#Dependencies[@]} -eq 0 ]]; then
+        notice "All dependencies have already been installed."
+        return
+    fi
+
+    # Make sure a compatible package manager is available
+    run_script 'pm_check_package_manager'
+
+    #shellcheck disable=SC2124 #Assigning an array to a string! Assign as array, or use * instead of @ to concatenate.
+    local deplist="${Dependencies[@]}"
+    deplist="${deplist// /${NC}\', \'${C["Program"]}}"
+    deplist="${NC}'${C["Program"]}${deplist}${NC}'"
+    notice "Installing dependencies: ${deplist}"
+
+    # Install missing dependencies using the package manager
+    run_script "pm_${PM}_install" "${Dependencies[@]}"
+}
+
+test_pm_install() {
+    run_script 'pm_install'
+}

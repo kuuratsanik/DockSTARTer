@@ -22,7 +22,7 @@ pm_dnf_install() {
 pm_dnf_install_commands() {
     local Command=""
 
-    local REDIRECT='> /dev/null 2>&1 '
+    local REDIRECT='&> /dev/null '
     if [[ -n ${VERBOSE-} ]]; then
         REDIRECT='2>&1 '
     fi
