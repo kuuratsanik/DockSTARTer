@@ -120,6 +120,10 @@ commands_update_self() {
         run_script 'set_permissions' "${TIMESTAMPS_FOLDER:?}"
         rm -rf "${TIMESTAMPS_FOLDER:?}/"* &> /dev/null || true
     fi
+    if [[ -d ${DEPSCHECK_FOLDER:?} ]]; then
+        run_script 'set_permissions' "${DEPSCHECK_FOLDER:?}"
+        rm -rf "${DEPSCHECK_FOLDER:?}/"* &> /dev/null || true
+    fi
 
     if [[ -z $* ]]; then
         exec bash "${SCRIPTNAME}" -e

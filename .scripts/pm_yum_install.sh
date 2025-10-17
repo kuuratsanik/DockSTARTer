@@ -2,6 +2,10 @@
 set -Eeuo pipefail
 IFS=$'\n\t'
 
+declare -a _dependencies_list=(
+    grep
+)
+
 declare Title="Install Dependencies"
 pm_yum_install() {
     if use_dialog_box; then
@@ -70,7 +74,7 @@ pm_yum_install_commands() {
         Packages="$(eval "${Command}" 2> /dev/null)" ||
             fatal "Failed to find packages to install.\nFailing command: ${C["FailingCommand"]}${Command}"
         if [[ -n ${IgnorePackages} ]]; then
-            Packages="$(grep -E -v "\b(${IgnorePackages})\b" <<< "${Packages}")"
+            Packages="$(${GREP} -E -v "\b(${IgnorePackages})\b" <<< "${Packages}")"
         fi
         Packages="$(sort -u <<< "${Packages}" | xargs)"
         if [[ -z ${Packages} ]]; then

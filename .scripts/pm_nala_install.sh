@@ -30,7 +30,7 @@ pm_nala_install_commands() {
     local -a Dependencies=("${PM_COMMAND_DEPS[@]}")
     if [[ ${FORCE-} != true ]]; then
         for index in "${!Dependencies[@]}"; do
-            if [[ -n $(command -v "${Dependencies[index]}") ]]; then
+            if pm_check_dependency "${Dependencies[index]}"; then
                 unset 'Dependencies[index]'
             fi
         done
@@ -39,7 +39,11 @@ pm_nala_install_commands() {
     if [[ ${#Dependencies[@]} -eq 0 ]]; then
         notice "All dependencies have already been installed."
     else
-        notice "Installing dependencies. Please be patient, this can take a while."
+        #shellcheck disable=SC2124 #Assigning an array to a string! Assign as array, or use * instead of @ to concatenate.
+        local deplist="${Dependencies[@]}"
+        deplist="${deplist// /${NC}\', \'${C["Program"]}}"
+        deplist="${NC}'${C["Program"]}${deplist}${NC}'"
+        notice "Installing dependencies: ${deplist}"
 
         if [[ -z "$(command -v apt-file)" ]]; then
             info "Installing '${C["Program"]}apt-file${NC}'."
@@ -55,14 +59,18 @@ pm_nala_install_commands() {
             fatal "Failed to get updates from apt.\nFailing command: ${C["FailingCommand"]}${Command}"
 
         notice "Determining packages to install."
-        local Packages
-        Packages="$(detect_packages "${Dependencies[@]}" | xargs)"
+        local -a Packages
+        readarray -t Packages < <(detect_packages "${Dependencies[@]}")
 
-        if [[ -z ${Packages} ]]; then
+        if [[ ${#Packages[@]} -eq 0 ]]; then
             notice "No packages found to install."
         else
-            notice "Installing packages."
-            Command="sudo nala install --no-update -y ${Packages}"
+            #shellcheck disable=SC2124 #Assigning an array to a string! Assign as array, or use * instead of @ to concatenate.
+            local PackagesString="${Packages[@]}"
+            local pkglist="${PackagesString// /${NC}\', \'${C["Program"]}}"
+            pkglist="${NC}'${C["Program"]}${pkglist}${NC}'"
+            notice "Installing packages: ${pkglist}"
+            Command="sudo nala install --no-update -y ${PackagesString}"
             notice "Running: ${C["RunningCommand"]}${Command}${NC}"
             eval "${REDIRECT}${Command}" ||
                 fatal "Failed to install dependencies from nala.\nFailing command: ${C["FailingCommand"]}${Command}"
@@ -82,9 +90,13 @@ detect_packages() {
     local RegEx_AptFile="^(.*):.*/s?bin/${RegEx_Dependencies}$"
 
     for Dep in "${Dependencies[@]}"; do
-        local Command="apt-file search bin/${Dep}"
-        notice "Running: ${C["RunningCommand"]}${Command}${NC}"
-        eval "${Command}" 2> /dev/null
+        if [[ -v PM_DEP_PACKAGE["${Dep}"] ]]; then
+            echo "${PM_DEP_PACKAGE["${Dep}"]}"
+        else
+            local Command="apt-file search bin/${Dep}"
+            notice "Running: ${C["RunningCommand"]}${Command}${NC}"
+            eval "${Command}" 2> /dev/null
+        fi
     done | while IFS= read -r line; do
         if [[ ${line} =~ ${RegEx_AptFile} ]]; then
             local Package="${BASH_REMATCH[1]}"

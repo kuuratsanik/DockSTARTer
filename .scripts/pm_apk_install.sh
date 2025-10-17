@@ -4,6 +4,10 @@ IFS=$'\n\t'
 
 declare Title="Install Dependencies"
 
+declare -a _dependencies_list=(
+    grep
+)
+
 pm_apk_install() {
     if use_dialog_box; then
         coproc {
@@ -30,7 +34,7 @@ pm_apk_install_commands() {
     local -a Dependencies=("${PM_COMMAND_DEPS[@]}")
     if [[ ${FORCE-} != true ]]; then
         for index in "${!Dependencies[@]}"; do
-            if [[ -n $(command -v "${Dependencies[index]}") ]]; then
+            if pm_check_dependency "${Dependencies[index]}"; then
                 unset 'Dependencies[index]'
             fi
         done
@@ -58,7 +62,7 @@ pm_apk_install_commands() {
         Packages="$(eval "${Command}" 2> /dev/null)" ||
             fatal "Failed to find packages to install.\nFailing command: ${C["FailingCommand"]}${Command}"
         if [[ -n ${IgnorePackages} ]]; then
-            Packages="$(grep -E -v "\b(${IgnorePackages})\b" <<< "${Packages}")"
+            Packages="$(${GREP} -E -v "\b(${IgnorePackages})\b" <<< "${Packages}")"
         fi
         Packages="$(sort -u <<< "${Packages}" | xargs)"
 
