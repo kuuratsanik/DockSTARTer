@@ -11,7 +11,6 @@ pm_install() {
                 unset 'Dependencies[index]'
             fi
         done
-        Dependencies=("${Dependencies[@]}")
     fi
 
     # Exit if no dependencies need to be installed
