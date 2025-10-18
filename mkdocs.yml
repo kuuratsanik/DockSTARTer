@@ -283,6 +283,13 @@ nav:
       - apps/yacht.md
       - apps/youtubedl.md
       - apps/znc.md
+  - Governance:
+      - governance/README.md
+      - Policy Framework: POLICIES.md
+      - Compliance:
+          - governance/compliance/README.md
+      - Lineage & Audit:
+          - governance/lineage/TEMPLATE.json
   - Overrides:
       - overrides/introduction.md
       - overrides/autoscan.md
