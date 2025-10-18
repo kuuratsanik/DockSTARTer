@@ -6,8 +6,10 @@ IFS=$'\n\t'
 # Main interface for governance, compliance, and lineage operations
 # K.I.T.T.-like communication style enabled
 
+# Determine home directory safely
+HOME_DIR="${DETECTED_HOMEDIR:-${HOME:-$PWD}}"
 readonly VERSION="1.0.0"
-readonly GOVERNANCE_DIR="${DETECTED_HOMEDIR:-.}/.config/dockstarter/governance"
+readonly GOVERNANCE_DIR="${HOME_DIR}/.config/dockstarter/governance"
 
 # Colors for K.I.T.T.-like output
 readonly C_RESET='\033[0m'
