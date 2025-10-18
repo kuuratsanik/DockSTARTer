@@ -6,12 +6,12 @@ Welcome! This guide will get you up and running with the DockSTARTer governance 
 
 ## What You Get
 
-✅ **Policy Framework** - Comprehensive governance charter (POLICIES.md)  
-✅ **AI Agent Guidelines** - GitHub Copilot operational rules  
-✅ **Compliance Automation** - GDPR, EU AI Act, security audits  
-✅ **Lineage Logging** - Immutable audit trails for all actions  
-✅ **Knowledge Sync** - Weekly updates from 100,000+ trusted sources  
-✅ **K.I.T.T.-like CLI** - Intelligent, witty governance interface  
+✅ **Policy Framework** - Comprehensive governance charter (POLICIES.md)
+✅ **AI Agent Guidelines** - GitHub Copilot operational rules
+✅ **Compliance Automation** - GDPR, EU AI Act, security audits
+✅ **Lineage Logging** - Immutable audit trails for all actions
+✅ **Knowledge Sync** - Weekly updates from 100,000+ trusted sources
+✅ **K.I.T.T.-like CLI** - Intelligent, witty governance interface
 
 ---
 
@@ -22,9 +22,11 @@ Welcome! This guide will get you up and running with the DockSTARTer governance 
 ```bash
 cd /path/to/DockSTARTer
 bash .scripts/governance_cli.sh init
+
 ```
 
 This creates:
+
 - `~/.config/dockstarter/governance/` - Main governance directory
 - `~/.config/dockstarter/lineage/` - Audit trail storage
 - `~/.config/dockstarter/knowledge/` - Knowledge sync cache
@@ -34,9 +36,11 @@ This creates:
 
 ```bash
 bash .scripts/governance_cli.sh compliance
+
 ```
 
 Checks:
+
 - Docker security configuration
 - Data privacy settings
 - Lineage logging status
@@ -47,6 +51,7 @@ Checks:
 #### Cron Jobs (Recommended)
 
 ```bash
+
 # Copy cron template
 sudo cp docs/governance/cron-template /etc/cron.d/dockstarter-governance
 
@@ -55,6 +60,7 @@ sudo nano /etc/cron.d/dockstarter-governance
 
 # Reload cron
 sudo systemctl reload cron
+
 ```
 
 #### Systemd Timers (Advanced)
@@ -68,6 +74,7 @@ See [`docs/governance/systemd-timers.md`](./systemd-timers.md) (TODO)
 ### Governance CLI
 
 ```bash
+
 # Show dashboard
 bash .scripts/governance_cli.sh status
 
@@ -82,6 +89,7 @@ bash .scripts/governance_cli.sh knowledge sync
 
 # View policy framework
 bash .scripts/governance_cli.sh policy
+
 ```
 
 ### Manual Operations
@@ -98,11 +106,13 @@ lineage_log \
   "4.1 Automatic Operations" \
   "compliant" \
   "manual-deployment"
+
 ```
 
 #### Run Compliance Check
 
 ```bash
+
 # Full report
 bash .scripts/compliance_check.sh report
 
@@ -110,11 +120,13 @@ bash .scripts/compliance_check.sh report
 bash .scripts/compliance_check.sh docker
 bash .scripts/compliance_check.sh privacy
 bash .scripts/compliance_check.sh healing
+
 ```
 
 #### Knowledge Sync
 
 ```bash
+
 # Initialize
 bash .scripts/knowledge_sync.sh init
 
@@ -123,6 +135,7 @@ bash .scripts/knowledge_sync.sh run
 
 # Check status
 bash .scripts/knowledge_sync.sh status
+
 ```
 
 ---
@@ -145,6 +158,7 @@ Every significant action generates an audit record:
     "status": "compliant"
   }
 }
+
 ```
 
 ### Compliance Status
@@ -184,6 +198,7 @@ DockSTARTer/
         └── lineage/
             ├── README.md                # Audit trail documentation
             └── TEMPLATE.json            # Lineage event schema
+
 ```
 
 ---
@@ -193,6 +208,7 @@ DockSTARTer/
 ### Add New Docker Container
 
 ```bash
+
 # 1. Edit compose file
 nano compose/myapp.yml
 
@@ -202,21 +218,25 @@ lineage_log "code_modification" "Added myapp container" '["compose/myapp.yml"]' 
 
 # 3. Deploy
 docker-compose up -d myapp
+
 ```
 
 ### Review Compliance Report
 
 ```bash
+
 # Generate latest report
 bash .scripts/governance_cli.sh compliance
 
 # View JSON details
 cat ~/.config/dockstarter/governance/compliance/report_$(date -u +%Y-%m-%d).json | jq '.'
+
 ```
 
 ### Query Audit Trail
 
 ```bash
+
 # List all events from today
 cat ~/.config/dockstarter/lineage/$(date -u +%Y-%m-%d).jsonl | jq '.'
 
@@ -225,6 +245,7 @@ jq 'select(.action == "deployment")' ~/.config/dockstarter/lineage/*.jsonl
 
 # Find non-compliant events
 jq 'select(.policy_compliance.status != "compliant")' ~/.config/dockstarter/lineage/*.jsonl
+
 ```
 
 ---
@@ -234,6 +255,7 @@ jq 'select(.policy_compliance.status != "compliant")' ~/.config/dockstarter/line
 ### "jq: command not found"
 
 ```bash
+
 # Ubuntu/Debian
 sudo apt install jq
 
@@ -242,26 +264,31 @@ sudo apk add jq
 
 # macOS
 brew install jq
+
 ```
 
 ### Permissions Error
 
 ```bash
+
 # Fix ownership
 chown -R $USER:$USER ~/.config/dockstarter/
 
 # Fix permissions
 chmod -R 755 ~/.config/dockstarter/
+
 ```
 
 ### Lineage Events Not Logging
 
 ```bash
+
 # Check if function is loaded
 declare -F lineage_log
 
 # If not found, source manually
 source .scripts/lineage_log.sh
+
 ```
 
 ---
@@ -288,12 +315,12 @@ source .scripts/lineage_log.sh
 ## Philosophy
 
 > *"Every action is auditable. Every decision is governed. Every interaction is an opportunity to demonstrate ethical, effective AI collaboration."*
-> 
+>
 > — DockSTARTer Governance Charter
 
 ---
 
 **Welcome to the future of self-governed, AI-enhanced infrastructure!** 🚀
 
-*Last Updated: October 18, 2025*  
+*Last Updated: October 18, 2025*
 *Version: 1.0.0*

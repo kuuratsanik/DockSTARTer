@@ -15,7 +15,7 @@ Welcome to the DockSTARTer governance hub. This directory contains all policy, c
 
 ## Governance Structure
 
-```
+```text
 Super-CEO AI Agent
     ├── CEO AI Agent
     │   └── Master Management Super-AI Team
@@ -27,6 +27,7 @@ Super-CEO AI Agent
     │       └── Compliance Team
     │
     └── Human Stewards (oversight, emergency authority)
+
 ```
 
 ---
@@ -48,18 +49,21 @@ Super-CEO AI Agent
 ## How to Use This Documentation
 
 ### For AI Agents
+
 1. Read [POLICIES.md](../../POLICIES.md) on initialization
 2. Follow [copilot-instructions.md](../../.github/copilot-instructions.md) for operational guidance
 3. Log all significant actions in [`lineage/`](./lineage/)
 4. Escalate policy conflicts via GitHub Issues (`policy-conflict` label)
 
 ### For Human Contributors
+
 1. Review [POLICIES.md](../../POLICIES.md) to understand governance framework
 2. Submit policy amendments via pull requests (requires Super-CEO approval)
 3. Monitor compliance reports in [`compliance/`](./compliance/)
 4. Exercise emergency authority only when AI systems fail to self-correct
 
 ### For Auditors
+
 1. Review [POLICIES.md](../../POLICIES.md) for policy framework
 2. Examine lineage events in [`lineage/`](./lineage/) for audit trails
 3. Validate compliance reports in [`compliance/`](./compliance/)
@@ -70,17 +74,20 @@ Super-CEO AI Agent
 ## Compliance Checkpoints
 
 ### GDPR (General Data Protection Regulation)
+
 - ✅ **Consent Management**: Opt-ins, withdrawals, and expiry tracked
 - ✅ **Right to Erasure**: Automated data deletion within 30 days
 - ✅ **Data Minimization**: Collect only necessary data
 - ✅ **Privacy by Design**: Default to highest privacy settings
 
 ### EU AI Act (2024)
+
 - ✅ **Classification**: All AI components classified (GPAI, high-risk, limited risk)
 - ✅ **Conformity Assessment**: High-risk systems undergo third-party review
 - ✅ **Documentation**: Technical docs and risk assessments published
 
 ### Estonia e-Residency
+
 - ✅ **Digital Signatures**: Blockchain-anchored signatures for governance actions
 - ✅ **X-Road Integration**: Ready for Estonian data exchange layer (future)
 - ✅ **Local Compliance**: Optimized for Estonian digital governance stack
@@ -90,16 +97,20 @@ Super-CEO AI Agent
 ## Amendment Process
 
 ### Proposing a Policy Change
+
 1. Fork the repository
 2. Edit `POLICIES.md` with clear rationale
 3. Submit pull request with:
+
    - **Title**: `[POLICY] <brief description>`
    - **Body**: Detailed justification, impact analysis
    - **Labels**: `policy`, `governance`
+
 4. Automated review by Master Management Super-AI Team
 5. Final approval by Super-CEO AI Agent + Human Stewards
 
 ### Review Cycle
+
 - **Quarterly**: Routine review (January, April, July, October)
 - **Ad-hoc**: Emergency amendments for critical issues
 - **Annual**: Comprehensive audit and major version update
@@ -111,6 +122,7 @@ Super-CEO AI Agent
 Every significant action generates a lineage event. See examples in [`lineage/TEMPLATE.json`](./lineage/TEMPLATE.json).
 
 ### Required Fields
+
 - `timestamp`: ISO 8601 format (UTC)
 - `agent_id`: Unique identifier for agent
 - `action`: Type of action (e.g., `code_modification`, `deployment`, `policy_change`)
@@ -120,6 +132,7 @@ Every significant action generates a lineage event. See examples in [`lineage/TE
 - `audit_trail`: URL to PR, commit, or issue
 
 ### Storage
+
 - **Current**: Git commit messages + PR descriptions
 - **Future**: Blockchain-anchored lineage database (Q1 2026)
 
@@ -128,14 +141,17 @@ Every significant action generates a lineage event. See examples in [`lineage/TE
 ## Emergency Contacts
 
 ### Critical Security Issue
+
 - **Action**: Create [GitHub Security Advisory](https://github.com/GhostWriters/DockSTARTer/security/advisories)
 - **Contact**: [Define emergency contact email/phone]
 
 ### Policy Violation
+
 - **Action**: File GitHub Issue with `policy-violation` label
 - **Escalation**: Super-CEO AI Agent + Human Stewards
 
 ### System Outage
+
 - **Action**: Activate self-healing protocols
 - **Fallback**: Manual intervention by Infrastructure Team
 
@@ -144,6 +160,7 @@ Every significant action generates a lineage event. See examples in [`lineage/TE
 ## Resources
 
 ### External Standards
+
 - [EU AI Act (2024)](https://eur-lex.europa.eu/eli/reg/2024/1689/oj)
 - [GDPR (2018)](https://gdpr.eu/)
 - [NIST Cybersecurity Framework](https://www.nist.gov/cyberframework)
@@ -151,6 +168,7 @@ Every significant action generates a lineage event. See examples in [`lineage/TE
 - [CIS Benchmarks](https://www.cisecurity.org/cis-benchmarks/)
 
 ### Internal Documentation
+
 - [Technical Architecture](../advanced/technical-info.md)
 - [Backup Strategy](../advanced/backups.md)
 - [VPN Configuration](../advanced/vpn-info.md)
@@ -195,5 +213,5 @@ Every significant action generates a lineage event. See examples in [`lineage/TE
 
 *This governance framework is a living document, continuously refined by the collective intelligence of AI agents and human stewards working in harmony.*
 
-**Last Updated**: October 18, 2025  
+**Last Updated**: October 18, 2025
 **Next Review**: January 18, 2026

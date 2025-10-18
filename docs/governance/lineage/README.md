@@ -7,6 +7,7 @@ This directory contains the lineage event logging infrastructure for DockSTARTer
 ## Overview
 
 **Lineage events** are structured JSON records that document:
+
 - **WHO** performed the action (agent ID or user)
 - **WHAT** action was taken
 - **WHEN** it occurred (UTC timestamp)
@@ -35,6 +36,7 @@ See [`TEMPLATE.json`](./TEMPLATE.json) for the complete JSON schema.
   },
   "audit_trail": "https://github.com/GhostWriters/DockSTARTer/pull/1234"
 }
+
 ```
 
 ---
@@ -42,6 +44,7 @@ See [`TEMPLATE.json`](./TEMPLATE.json) for the complete JSON schema.
 ## Storage
 
 Lineage events are stored in **JSON Lines** (`.jsonl`) format:
+
 - **Location**: `~/.config/dockstarter/lineage/`
 - **Filename**: `YYYY-MM-DD.jsonl` (one file per day)
 - **Format**: One JSON object per line (newline-delimited)
@@ -59,6 +62,7 @@ Lineage events are stored in **JSON Lines** (`.jsonl`) format:
 ### From Shell Scripts
 
 ```bash
+
 # Source the lineage logging function
 source .scripts/lineage_log.sh
 
@@ -70,6 +74,7 @@ lineage_log \
   "4.1 Automatic Operations" \
   "compliant" \
   "manual-deployment"
+
 ```
 
 ### From Python (future)
@@ -91,9 +96,10 @@ def lineage_log(action, intent, files_modified=None, policy_section="", status="
         },
         "audit_trail": audit_trail
     }
-    
+
     with open(f"~/.config/dockstarter/lineage/{datetime.utcnow().strftime('%Y-%m-%d')}.jsonl", "a") as f:
         f.write(json.dumps(event) + "\n")
+
 ```
 
 ---
@@ -103,32 +109,40 @@ def lineage_log(action, intent, files_modified=None, policy_section="", status="
 ### List Recent Events
 
 ```bash
+
 # Last 10 events
 cat ~/.config/dockstarter/lineage/$(date -u +%Y-%m-%d).jsonl | tail -n 10 | jq '.'
 
 # Events from specific date
 jq '.' ~/.config/dockstarter/lineage/2025-10-18.jsonl
+
 ```
 
 ### Filter by Action Type
 
 ```bash
+
 # All code modifications
 jq 'select(.action == "code_modification")' ~/.config/dockstarter/lineage/*.jsonl
+
 ```
 
 ### Filter by Policy Compliance
 
 ```bash
+
 # Non-compliant events
 jq 'select(.policy_compliance.status != "compliant")' ~/.config/dockstarter/lineage/*.jsonl
+
 ```
 
 ### Generate Compliance Report
 
 ```bash
+
 # Count events by action type
 jq -r '.action' ~/.config/dockstarter/lineage/*.jsonl | sort | uniq -c
+
 ```
 
 ---
@@ -142,11 +156,13 @@ jq -r '.action' ~/.config/dockstarter/lineage/*.jsonl | sort | uniq -c
 ### Manual Archive
 
 ```bash
+
 # Compress old logs
 tar -czf lineage-archive-2025-Q3.tar.gz ~/.config/dockstarter/lineage/2025-0[789]-*.jsonl
 
 # Upload to backup storage
 rclone copy lineage-archive-2025-Q3.tar.gz remote:backups/lineage/
+
 ```
 
 ---
@@ -156,8 +172,10 @@ rclone copy lineage-archive-2025-Q3.tar.gz remote:backups/lineage/
 Lineage events are referenced in compliance reports:
 
 ```bash
+
 # Check if lineage logging is active
 bash .scripts/compliance_check.sh lineage
+
 ```
 
 Expected output:
@@ -169,6 +187,7 @@ Expected output:
   "issues": [],
   "policy_ref": "Section 7.3 - Auditability"
 }
+
 ```
 
 ---
@@ -180,14 +199,17 @@ Expected output:
 **Concept**: Daily lineage event batches will be hashed and anchored on-chain for tamper-proof audit trails.
 
 **Benefits**:
+
 - ✅ Cryptographic proof of event sequence
 - ✅ Immutable audit history
 - ✅ Compliance with DAO governance requirements
 
 **Implementation**:
 ```bash
+
 # Future: Anchor daily batch to blockchain
 lineage_anchor --batch ~/.config/dockstarter/lineage/2025-10-18.jsonl --chain ethereum
+
 ```
 
 ---
@@ -199,17 +221,20 @@ lineage_anchor --batch ~/.config/dockstarter/lineage/2025-10-18.jsonl --chain et
 **Check 1: Lineage directory exists**
 ```bash
 ls -la ~/.config/dockstarter/lineage/
+
 ```
 
 **Check 2: Permissions**
 ```bash
 chmod 755 ~/.config/dockstarter/lineage/
+
 ```
 
 **Check 3: Lineage logging function loaded**
 ```bash
 declare -F lineage_log
 # Should output: lineage_log
+
 ```
 
 ### Invalid JSON Format
@@ -219,6 +244,7 @@ declare -F lineage_log
 jq empty ~/.config/dockstarter/lineage/*.jsonl
 # No output = valid JSON
 # Error output = fix the malformed line
+
 ```
 
 ---
@@ -248,5 +274,5 @@ jq empty ~/.config/dockstarter/lineage/*.jsonl
 
 ---
 
-*Last Updated: October 18, 2025*  
+*Last Updated: October 18, 2025*
 *Schema Version: 1.0.0*
