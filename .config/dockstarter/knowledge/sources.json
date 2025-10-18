@@ -1,0 +1,23 @@
+{
+  "last_updated": "",
+  "sources": {
+    "docker": [
+      "https://docs.docker.com/",
+      "https://github.com/docker/awesome-compose"
+    ],
+    "security": [
+      "https://owasp.org/www-project-top-ten/",
+      "https://www.nist.gov/cyberframework",
+      "https://cve.mitre.org/"
+    ],
+    "infrastructure": [
+      "https://www.proxmox.com/en/news",
+      "https://kubernetes.io/blog/",
+      "https://www.linuxserver.io/blog"
+    ],
+    "homelab": [
+      "https://github.com/awesome-selfhosted/awesome-selfhosted",
+      "https://github.com/mikeroyal/Self-Hosting-Guide"
+    ]
+  }
+}

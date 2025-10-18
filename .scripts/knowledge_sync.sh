@@ -6,7 +6,9 @@ IFS=$'\n\t'
 # Compliant with POLICIES.md Section 6.1
 # Downloads latest best practices, security updates, and knowledge sources
 
-readonly KNOWLEDGE_SYNC_DIR="${DETECTED_HOMEDIR:-.}/.config/dockstarter/knowledge"
+# Determine home directory safely
+HOME_DIR="${DETECTED_HOMEDIR:-${HOME:-$PWD}}"
+readonly KNOWLEDGE_SYNC_DIR="${HOME_DIR}/.config/dockstarter/knowledge"
 readonly KNOWLEDGE_SOURCES="${KNOWLEDGE_SYNC_DIR}/sources.json"
 readonly KNOWLEDGE_CACHE="${KNOWLEDGE_SYNC_DIR}/cache"
 readonly KNOWLEDGE_LOG="${KNOWLEDGE_SYNC_DIR}/sync.log"

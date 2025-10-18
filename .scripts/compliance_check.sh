@@ -6,7 +6,9 @@ IFS=$'\n\t'
 # Validates adherence to POLICIES.md requirements
 # Performs automated compliance audits
 
-readonly COMPLIANCE_DIR="${DETECTED_HOMEDIR:-.}/.config/dockstarter/compliance"
+# Determine home directory safely
+HOME_DIR="${DETECTED_HOMEDIR:-${HOME:-$PWD}}"
+readonly COMPLIANCE_DIR="${HOME_DIR}/.config/dockstarter/compliance"
 readonly COMPLIANCE_REPORT="${COMPLIANCE_DIR}/report_$(date -u +"%Y-%m-%d").json"
 
 compliance_init() {
@@ -17,7 +19,7 @@ check_docker_security() {
     local STATUS="compliant"
     local ISSUES=()
     
-    echo "Checking Docker security configuration..."
+    echo "Checking Docker security configuration..." >&2
     
     # Check if Docker daemon is running
     if ! docker info &>/dev/null; then
@@ -50,12 +52,12 @@ check_docker_security() {
     # Return results as JSON
     jq -n \
         --arg status "${STATUS}" \
-        --argjson issues "$(printf '%s\n' "${ISSUES[@]}" | jq -R . | jq -s .)" \
+        --argjson issues "$(if [[ ${#ISSUES[@]} -eq 0 ]]; then echo '[]'; else printf '%s\n' "${ISSUES[@]}" | jq -R . | jq -s .; fi)" \
         '{
             "check": "docker_security",
             "status": $status,
             "issues": $issues,
-            "policy_ref": "Section 5.2 - Security & Privacy"
+            "policy_ref": "Section 5.1 - EU AI Act Alignment"
         }'
 }
 
@@ -63,12 +65,12 @@ check_data_privacy() {
     local STATUS="compliant"
     local ISSUES=()
     
-    echo "Checking data privacy configuration..."
+    echo "Checking data privacy configuration..." >&2
     
     # Check for environment files with sensitive data
-    if [[ -d "${DETECTED_HOMEDIR}/.docker/compose" ]]; then
+    if [[ -d "${HOME_DIR}/.docker/compose" ]]; then
         local ENV_FILES
-        ENV_FILES=$(find "${DETECTED_HOMEDIR}/.docker/compose" -name ".env*" 2>/dev/null || true)
+        ENV_FILES=$(find "${HOME_DIR}/.docker/compose" -name ".env*" 2>/dev/null || true)
         
         if [[ -n "${ENV_FILES}" ]]; then
             # Check if env files contain API keys or passwords in plain text
@@ -82,7 +84,7 @@ check_data_privacy() {
     
     jq -n \
         --arg status "${STATUS}" \
-        --argjson issues "$(printf '%s\n' "${ISSUES[@]}" | jq -R . | jq -s .)" \
+        --argjson issues "$(if [[ ${#ISSUES[@]} -eq 0 ]]; then echo '[]'; else printf '%s\n' "${ISSUES[@]}" | jq -R . | jq -s .; fi)" \
         '{
             "check": "data_privacy",
             "status": $status,
@@ -95,9 +97,9 @@ check_lineage_logging() {
     local STATUS="compliant"
     local ISSUES=()
     
-    echo "Checking lineage logging..."
+    echo "Checking lineage logging..." >&2
     
-    local LINEAGE_DIR="${DETECTED_HOMEDIR}/.config/dockstarter/lineage"
+    local LINEAGE_DIR="${HOME_DIR}/.config/dockstarter/lineage"
     
     if [[ ! -d "${LINEAGE_DIR}" ]]; then
         ISSUES+=("Lineage logging directory not found")
@@ -114,7 +116,7 @@ check_lineage_logging() {
     
     jq -n \
         --arg status "${STATUS}" \
-        --argjson issues "$(printf '%s\n' "${ISSUES[@]}" | jq -R . | jq -s .)" \
+        --argjson issues "$(if [[ ${#ISSUES[@]} -eq 0 ]]; then echo '[]'; else printf '%s\n' "${ISSUES[@]}" | jq -R . | jq -s .; fi)" \
         '{
             "check": "lineage_logging",
             "status": $status,
@@ -127,7 +129,7 @@ check_self_healing() {
     local STATUS="compliant"
     local ISSUES=()
     
-    echo "Checking self-healing configuration..."
+    echo "Checking self-healing configuration..." >&2
     
     # Check if containers have restart policies
     local NO_RESTART_POLICY
@@ -153,7 +155,7 @@ check_self_healing() {
     
     jq -n \
         --arg status "${STATUS}" \
-        --argjson issues "$(printf '%s\n' "${ISSUES[@]}" | jq -R . | jq -s .)" \
+        --argjson issues "$(if [[ ${#ISSUES[@]} -eq 0 ]]; then echo '[]'; else printf '%s\n' "${ISSUES[@]}" | jq -R . | jq -s .; fi)" \
         '{
             "check": "self_healing",
             "status": $status,
@@ -168,7 +170,7 @@ generate_compliance_report() {
     local TIMESTAMP
     TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
     
-    echo "Generating compliance report..."
+    echo "Generating compliance report..." >&2
     
     # Run all checks and combine results
     local DOCKER_SEC DATA_PRIV LINEAGE SELF_HEAL
@@ -193,10 +195,12 @@ generate_compliance_report() {
                     $data_priv,
                     $lineage,
                     $self_heal
-                ],
+                ]
+            } | . + {
                 "overall_status": (
-                    if ([.checks[].status] | any(. == "non-compliant")) then "non-compliant"
-                    elif ([.checks[].status] | any(. == "compliant-with-exceptions")) then "compliant-with-exceptions"
+                    [.checks[].status] as $statuses |
+                    if ($statuses | any(. == "non-compliant")) then "non-compliant"
+                    elif ($statuses | any(. == "compliant-with-exceptions")) then "compliant-with-exceptions"
                     else "compliant"
                     end
                 )
@@ -223,25 +227,27 @@ Checks Performed:
     fi
 }
 
-# Main execution
-case "${1:-report}" in
-    report)
-        generate_compliance_report
-        ;;
-    docker)
-        check_docker_security | jq '.'
-        ;;
-    privacy)
-        check_data_privacy | jq '.'
-        ;;
-    lineage)
-        check_lineage_logging | jq '.'
-        ;;
-    healing)
-        check_self_healing | jq '.'
-        ;;
-    *)
-        echo "Usage: $0 {report|docker|privacy|lineage|healing}"
-        exit 1
-        ;;
-esac
+# Main execution (only if not sourced)
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+    case "${1:-report}" in
+        report)
+            generate_compliance_report
+            ;;
+        docker)
+            check_docker_security | jq '.'
+            ;;
+        privacy)
+            check_data_privacy | jq '.'
+            ;;
+        lineage)
+            check_lineage_logging | jq '.'
+            ;;
+        healing)
+            check_self_healing | jq '.'
+            ;;
+        *)
+            echo "Usage: $0 {report|docker|privacy|lineage|healing}"
+            exit 1
+            ;;
+    esac
+fi

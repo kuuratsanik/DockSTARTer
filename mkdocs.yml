@@ -286,10 +286,15 @@ nav:
   - Governance:
       - governance/README.md
       - Policy Framework: POLICIES.md
+      - Quick Start: governance/QUICK_START.md
+      - Testing Guide: governance/TESTING.md
+      - Final Report: governance/FINAL_IMPLEMENTATION_REPORT.md
+      - Implementation Roadmap: governance/ROADMAP.md
       - Compliance:
           - governance/compliance/README.md
       - Lineage & Audit:
-          - governance/lineage/TEMPLATE.json
+          - governance/lineage/README.md
+          - Lineage Template: governance/lineage/TEMPLATE.json
   - Overrides:
       - overrides/introduction.md
       - overrides/autoscan.md

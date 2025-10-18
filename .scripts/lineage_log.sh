@@ -39,7 +39,8 @@ EOF
 )
     
     # Log to file (create directory if needed)
-    local LINEAGE_DIR="${DETECTED_HOMEDIR}/.config/dockstarter/lineage"
+    local HOME_DIR="${DETECTED_HOMEDIR:-${HOME:-$PWD}}"
+    local LINEAGE_DIR="${HOME_DIR}/.config/dockstarter/lineage"
     mkdir -p "${LINEAGE_DIR}"
     
     local LINEAGE_FILE="${LINEAGE_DIR}/$(date -u +"%Y-%m-%d").jsonl"
