@@ -1,0 +1,34 @@
+# DockSTARTer Governance Automation
+# Cron Jobs for Weekly Knowledge Sync and Monthly Compliance Audits
+# 
+# Installation:
+#   1. Copy this file: cp docs/governance/cron-template /etc/cron.d/dockstarter-governance
+#   2. Update DOCKSTARTER_PATH to your installation directory
+#   3. Reload cron: sudo systemctl reload cron
+#
+# Or add to user crontab:
+#   crontab -e
+#   Then paste the job lines below (without SHELL/PATH/MAILTO headers)
+
+SHELL=/bin/bash
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+MAILTO=root
+
+# Change this to your DockSTARTer installation path
+DOCKSTARTER_PATH=/opt/DockSTARTer
+
+# Weekly Knowledge Sync (Sundays at 2:00 AM UTC)
+# Compliant with POLICIES.md Section 6.1
+0 2 * * 0 root cd $DOCKSTARTER_PATH && bash .scripts/knowledge_sync.sh run >> /var/log/dockstarter-knowledge-sync.log 2>&1
+
+# Monthly Compliance Audit (1st of every month at 3:00 AM UTC)
+# Compliant with POLICIES.md Section 5.1
+0 3 1 * * root cd $DOCKSTARTER_PATH && bash .scripts/compliance_check.sh report >> /var/log/dockstarter-compliance.log 2>&1
+
+# Daily Lineage Event Validation (Every day at 1:00 AM UTC)
+# Optional: Validates JSON format of lineage events
+# 0 1 * * * root cd $DOCKSTARTER_PATH && bash .scripts/governance_cli.sh lineage validate >> /var/log/dockstarter-lineage.log 2>&1
+
+# Quarterly Policy Review Reminder (1st day of Jan, Apr, Jul, Oct at 9:00 AM UTC)
+# Sends notification to review POLICIES.md
+# 0 9 1 1,4,7,10 * root echo "Quarterly policy review due. See POLICIES.md Section 10.1" | mail -s "DockSTARTer Policy Review" admin@example.com
