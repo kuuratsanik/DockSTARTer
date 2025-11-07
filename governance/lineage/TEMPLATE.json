@@ -1,0 +1,169 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dockstarter.com/schemas/lineage-event.json",
+  "title": "Lineage Event",
+  "description": "Immutable audit record of an action taken by an AI agent or human contributor",
+  "type": "object",
+  "required": [
+    "timestamp",
+    "agent_id",
+    "action",
+    "intent",
+    "policy_compliance",
+    "audit_trail"
+  ],
+  "properties": {
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp in UTC (e.g., 2025-10-18T14:32:00Z)"
+    },
+    "agent_id": {
+      "type": "string",
+      "description": "Unique identifier for the agent (e.g., copilot-dockstarter-001, human-steward-alice)",
+      "pattern": "^(copilot|human|ceo|super-ceo|master-mgmt)-[a-z0-9-]+$"
+    },
+    "action": {
+      "type": "string",
+      "enum": [
+        "code_modification",
+        "deployment",
+        "policy_change",
+        "security_patch",
+        "configuration_update",
+        "knowledge_sync",
+        "dao_vote",
+        "treasury_operation",
+        "incident_response",
+        "compliance_audit",
+        "other"
+      ],
+      "description": "Type of action performed"
+    },
+    "intent": {
+      "type": "string",
+      "description": "Human-readable explanation of why the action was taken",
+      "minLength": 10,
+      "maxLength": 500
+    },
+    "files_modified": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "description": "Relative path to modified file (e.g., compose/plex.yml)"
+      },
+      "description": "List of files affected by this action (empty array if none)"
+    },
+    "policy_compliance": {
+      "type": "object",
+      "required": ["section", "status"],
+      "properties": {
+        "section": {
+          "type": "string",
+          "description": "Reference to POLICIES.md section (e.g., '4.1 Automatic Operations - Self-Healing')"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["compliant", "compliant-with-exceptions", "non-compliant", "not-applicable"],
+          "description": "Compliance status"
+        },
+        "exceptions": {
+          "type": "string",
+          "description": "Explanation if status is 'compliant-with-exceptions' or 'non-compliant'"
+        }
+      }
+    },
+    "audit_trail": {
+      "type": "string",
+      "format": "uri",
+      "description": "URL to GitHub PR, commit, issue, or external audit log"
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Additional context (optional)",
+      "properties": {
+        "execution_time_ms": {
+          "type": "number",
+          "description": "Time taken to execute action (milliseconds)"
+        },
+        "resources_affected": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "List of infrastructure resources (containers, VMs, etc.)"
+        },
+        "security_impact": {
+          "type": "string",
+          "enum": ["none", "low", "medium", "high", "critical"],
+          "description": "Security impact level"
+        },
+        "cost_impact_usd": {
+          "type": "number",
+          "description": "Estimated cost impact in USD (negative = savings)"
+        }
+      }
+    },
+    "blockchain_anchor": {
+      "type": "object",
+      "description": "Blockchain anchoring details (future implementation)",
+      "properties": {
+        "chain": {"type": "string"},
+        "tx_hash": {"type": "string"},
+        "block_number": {"type": "number"}
+      }
+    }
+  },
+  
+  "examples": [
+    {
+      "timestamp": "2025-10-18T14:32:00Z",
+      "agent_id": "copilot-dockstarter-001",
+      "action": "code_modification",
+      "intent": "Add health check to Jellyfin container to improve auto-healing resilience",
+      "files_modified": ["compose/jellyfin.yml"],
+      "policy_compliance": {
+        "section": "4.1 Automatic Operations - Self-Healing",
+        "status": "compliant"
+      },
+      "audit_trail": "https://github.com/GhostWriters/DockSTARTer/pull/1234",
+      "metadata": {
+        "execution_time_ms": 250,
+        "resources_affected": ["jellyfin-container"],
+        "security_impact": "low",
+        "cost_impact_usd": 0
+      }
+    },
+    {
+      "timestamp": "2025-10-18T09:15:00Z",
+      "agent_id": "super-ceo-001",
+      "action": "policy_change",
+      "intent": "Quarterly policy review: Updated knowledge sync sources to include 2025 cloud security best practices",
+      "files_modified": ["POLICIES.md"],
+      "policy_compliance": {
+        "section": "6.2 Self-Updating Source List",
+        "status": "compliant"
+      },
+      "audit_trail": "https://github.com/GhostWriters/DockSTARTer/pull/1235",
+      "metadata": {
+        "security_impact": "medium"
+      }
+    },
+    {
+      "timestamp": "2025-10-17T22:45:00Z",
+      "agent_id": "human-steward-alice",
+      "action": "incident_response",
+      "intent": "Responding to CVE-2025-12345 in Nginx. Applied emergency patch and rotated TLS certificates.",
+      "files_modified": ["compose/nginx.yml", "config/nginx/ssl/"],
+      "policy_compliance": {
+        "section": "5.1 EU AI Act Alignment - High-Risk Systems",
+        "status": "compliant"
+      },
+      "audit_trail": "https://github.com/GhostWriters/DockSTARTer/security/advisories/GHSA-xxxx-yyyy-zzzz",
+      "metadata": {
+        "execution_time_ms": 1200000,
+        "resources_affected": ["nginx-proxy"],
+        "security_impact": "critical",
+        "cost_impact_usd": 0
+      }
+    }
+  ]
+}
